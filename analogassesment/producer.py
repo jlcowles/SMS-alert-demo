@@ -20,11 +20,10 @@ class Producer:
     # we will just use the ascii charset for now for convenience sake, although obviously this could be extended fairly easily
     __charset = string.ascii_letters + string.digits + string.punctuation 
     def __init__(self):
-        r = redis.Redis(host='localhost', port=6379, db=0)
-        self.__pubsub = r.pubsub(ignore_subscribe_messages=True)
+        self.__redis = redis.Redis(host='localhost', port=6379, db=0)
 
     def publish(self, elmt):
-        self.__pubsub.publish('test', elmt)
+        self.__redis.publish('messages', elmt)
 
     def generate_n_msg(self, n):
         count = 0
@@ -44,12 +43,11 @@ class Producer:
 
     def run(self, arguments):
         elmt_count = arguments['--num']
-        for elmt in zip(self.generate_n_phonenumbers(elmt_count), self.generate_n_msg(elmt_count)):
-            self.publish(elmt)
+        for elmt in zip(self.generate_n_phonenumbers(int(elmt_count)), self.generate_n_msg(int(elmt_count))):
+            self.publish(str(elmt))
 
 
 if __name__ == "__main__":
     arguments = docopt(__doc__)
-    print(arguments)
     prd = Producer()
     prd.run(arguments)
