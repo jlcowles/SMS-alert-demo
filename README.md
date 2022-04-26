@@ -18,3 +18,4 @@
 4. Unit test coverage could be improved some, but much of uncovered code is library code, which should not be explicitly unit tested
 5. The monitor has to be killed manually via CTRL+C, which is annoying but fine for a demo.
 6. Configuration is done in the laziest way (cli args) both due to again, the fact it's a demo, as well as to demonstrate competency in a variety of libraries instead of simply relying on either redis or a config file for all of the config.
+7. No CI/CD, again if this were a real project then good CI/CD is a must, but I have never used github actions, and I have limited time for this demo.
