@@ -1,5 +1,5 @@
 from unittest.mock import MagicMock
-from analogassesment.producer import Producer
+from smsdemo.producer import Producer
 
 def test_gen_phone_number():
     ret = list(Producer().generate_n_phonenumbers(10))

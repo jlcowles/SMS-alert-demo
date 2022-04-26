@@ -1,4 +1,4 @@
-# analog-assesment
+#  SMS-alert-demo
 (NOTE: I developed and tested this on Ubuntu running in WSL. Although I can't imagine anything in the repo that would break if ran on a different environment, I have not actually been able to test it.)
 ## Getting Started/Running
  1. Ensure Redis is [installed](https://redis.io/docs/getting-started/) and 'redis-server' is accessible from the path. Verify that the default redis port 6379 is not being used by another program.

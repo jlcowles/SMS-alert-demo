@@ -1,5 +1,5 @@
 from unittest.mock import patch
-from analogassesment.sender import Sender
+from smsdemo.sender import Sender
 
 # TODO this isn't really a good test, and is mostly just testing stdlib methods
 def test_get_sleep_len():

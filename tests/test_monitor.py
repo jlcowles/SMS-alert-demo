@@ -1,4 +1,4 @@
-from analogassesment.monitor import Monitor
+from smsdemo.monitor import Monitor
 
 def test_update_data():
     monitor = Monitor()
