@@ -10,6 +10,7 @@ Options:
 """
 import random
 import string
+import json
 
 from docopt import docopt
 import redis
@@ -23,7 +24,7 @@ class Producer:
         self.__redis = redis.Redis(host='localhost', port=6379, db=0)
 
     def publish(self, elmt):
-        self.__redis.publish('messages', elmt)
+        self.__redis.lpush('messages', json.dumps(elmt))
 
     def generate_n_msg(self, n):
         count = 0
@@ -42,9 +43,10 @@ class Producer:
             count += 1
 
     def run(self, arguments):
-        elmt_count = arguments['--num']
-        for elmt in zip(self.generate_n_phonenumbers(int(elmt_count)), self.generate_n_msg(int(elmt_count))):
-            self.publish(str(elmt))
+        elmt_count = int(arguments['--num'])
+        for elmt in zip(self.generate_n_phonenumbers(elmt_count), self.generate_n_msg(elmt_count)):
+            self.publish(elmt)
+        print('PRODUCER: All messages generated, exiting...')
 
 
 if __name__ == "__main__":

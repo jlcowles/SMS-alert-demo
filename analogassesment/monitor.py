@@ -16,10 +16,9 @@ import redis
 
 
 class Monitor:
+    PRINT_FORMAT = 'Total messages: {} Failed messages: {} Avg delay: {}'
     def __init__(self):
-        r = redis.Redis(host='localhost', port=6379, db=0)
-        self.__status_queue = r.pubsub(ignore_subscribe_messages=True)
-        self.__status_queue.subscribe('status')
+        self.__redis = redis.Redis(host='localhost', port=6379, db=0)
         self.__total_messages = 0
         self.__failed_messages = 0
         self.__average = 0
@@ -30,16 +29,21 @@ class Monitor:
             self.__failed_messages += 1
         # See https://math.stackexchange.com/a/1567345
         self.__average = self.__average + ((data['delay'] - self.__average) / self.__total_messages)
+    
+    def read_and_update_status(self):
+        while self.__redis.llen('status') > 0:
+            message = self.__redis.lpop('status').decode()
+            message_data = json.loads(message)
+            self.update_data(message_data)
 
     def run(self, arguments):
+        print('Starting monitor.')
+        # Yes it will loop forever, but that's fine for a monitoring app that is expected to run for basically forever
         while True:
-            message = self.__status_queue.get_message()
-            if message: # If message is None then we have gotten everything in the queue and should be wait again
-                message_data = json.loads(message['data'].decode())
-                self.update_data(message_data)
-            else:
-                print('Total messages: ' + str(self.__total_messages) + ' Failed messages: ' + str(self.__failed_messages) + ' Avg delay: ' + str(self.__average)) #TODO str format instead of this
-                time.sleep(float(arguments['--refreshtime']))
+            self.read_and_update_status()
+
+            print(self.PRINT_FORMAT.format(self.__total_messages, self.__failed_messages, self.__average))
+            time.sleep(float(arguments['--refreshtime']))
 
 
 
@@ -48,6 +52,5 @@ class Monitor:
 
 if __name__ == "__main__":
     arguments = docopt(__doc__)
-    print(arguments)
     monitor = Monitor()
     monitor.run(arguments)
